@@ -1,5 +1,7 @@
 # Steam Clock
 
+![Screenshot](https://github.com/mjago/steamclock/blob/7945258f849016c47383e687ba857ad179f8ba1e/clock/clock.png)
+
 Steam Punk Clock written in Go.
 
 This clock was one of several sections of a visual display
