@@ -160,27 +160,37 @@ func makeMovieName(count int) string {
 	return filename
 }
 
-func loadPng(filename string) image.Image {
-	b, _ := os.Open(filename)
+func loadImage(filename string) image.Image {
+	var (
+		img image.Image
+		b *os.File
+		err error
+	)
+	if b, err = os.Open(filename) ; err != nil {
+		panic("(loadImage()) failed to open " + filename)
+	}
 	defer b.Close()
-	p, _ := png.Decode(b)
-	return p
-}
-
-func loadJpeg(filename string) image.Image {
-	b, _ := os.Open(filename)
-	defer b.Close()
-	j, _ := jpeg.Decode(b)
-	return j
+	switch ext := filename[len(filename)-4:len(filename)]; ext{
+	case ".png":
+		img, err = png.Decode(b)
+	case ".jpg":
+		img, err = jpeg.Decode(b)
+	default:
+		panic("(loadImage()) Image loading requires png or jpg format!")
+	}
+	if err != nil {
+		panic("(loadImage()) failed to decode " + filename)
+	}
+	return img
 }
 
 func loadClock() Clock {
 	var clk Clock
-	clk.hourhand = loadPng("clock/hour.png")
-	clk.minutehand = loadPng("clock/min.png")
-	clk.secondhand = loadPng("clock/sec.png")
-	clk.steampunkleft = loadJpeg("clock/left.jpg")
-	clk.steampunkright = loadJpeg("clock/right.jpg")
+	clk.hourhand = loadImage("clock/hour.png")
+	clk.minutehand = loadImage("clock/min.png")
+	clk.secondhand = loadImage("clock/sec.png")
+	clk.steampunkleft = loadImage("clock/left.jpg")
+	clk.steampunkright = loadImage("clock/right.jpg")
 	return clk
 }
 
