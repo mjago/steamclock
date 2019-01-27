@@ -84,9 +84,9 @@ func drawClock(then time.Time, outfile string, clk Clock) {
 
 	dc.RotateAbout(aminute, clockX, clockY)
 	dc.DrawImageAnchored(clk.minutehand, clockX-170, clockY, 0.0, 0.5)
-	dc.RotateAbout(-aminute + ahour, clockX, clockY)
+	dc.RotateAbout(-aminute+ahour, clockX, clockY)
 	dc.DrawImageAnchored(clk.hourhand, clockX-14, clockY, 0.0, 0.5)
-	dc.RotateAbout(-ahour + asecond, clockX, clockY)
+	dc.RotateAbout(-ahour+asecond, clockX, clockY)
 	dc.DrawImageAnchored(clk.secondhand, clockX-170, clockY, 0.0, 0.5)
 	dc.SavePNG(outfile)
 }
@@ -159,14 +159,14 @@ func makeMovieName(count int) string {
 func loadImage(filename string) image.Image {
 	var (
 		img image.Image
-		b *os.File
+		b   *os.File
 		err error
 	)
-	if b, err = os.Open(filename) ; err != nil {
+	if b, err = os.Open(filename); err != nil {
 		panic("(loadImage()) failed to open " + filename)
 	}
 	defer b.Close()
-	switch ext := filename[len(filename)-4:len(filename)]; ext{
+	switch ext := filename[len(filename)-4 : len(filename)]; ext {
 	case ".png":
 		img, err = png.Decode(b)
 	case ".jpg":
