@@ -84,13 +84,9 @@ func drawClock(then time.Time, outfile string, clk Clock) {
 
 	dc.RotateAbout(aminute, clockX, clockY)
 	dc.DrawImageAnchored(clk.minutehand, clockX-170, clockY, 0.0, 0.5)
-	dc.RotateAbout(-aminute, clockX, clockY)
-
-	dc.RotateAbout(ahour, clockX, clockY)
+	dc.RotateAbout(-aminute + ahour, clockX, clockY)
 	dc.DrawImageAnchored(clk.hourhand, clockX-14, clockY, 0.0, 0.5)
-	dc.RotateAbout(-ahour, clockX, clockY)
-
-	dc.RotateAbout(asecond, clockX, clockY)
+	dc.RotateAbout(-ahour + asecond, clockX, clockY)
 	dc.DrawImageAnchored(clk.secondhand, clockX-170, clockY, 0.0, 0.5)
 	dc.SavePNG(outfile)
 }
