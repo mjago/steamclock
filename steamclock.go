@@ -26,6 +26,9 @@ const (
 	moviePrefix     = "movies/clock_"
 	mpvClientSkt    = "/tmp/mpvsocket"
 	movieExt        = ".mp4"
+	tcp             = "tcp"
+	tcpAddress      = "127.0.0.1"
+	tcpPort         = ":9999"
 	clockX          = 502
 	clockY          = 455
 )
@@ -70,18 +73,14 @@ func printOutput(outs []byte) {
 }
 
 func drawClock(then time.Time, outfile string, clk Clock) {
-	second, minute, hour := then.Second(), then.Minute(), then.Hour()
-	ahour := adjHour(hour, minute)
-	aminute := adjMinute(minute, second)
-	asecond := adjSecond(second)
-
 	var dc *gg.Context
+	second, minute, hour := then.Second(), then.Minute(), then.Hour()
+	ahour, aminute, asecond := adjHour(hour, minute), adjMinute(minute, second), adjSecond(second)
 	if second%8 < 4 {
 		dc = gg.NewContextForImage(clk.steampunkleft)
 	} else {
 		dc = gg.NewContextForImage(clk.steampunkright)
 	}
-
 	dc.RotateAbout(aminute, clockX, clockY)
 	dc.DrawImageAnchored(clk.minutehand, clockX-170, clockY, 0.0, 0.5)
 	dc.RotateAbout(-aminute+ahour, clockX, clockY)
@@ -96,14 +95,14 @@ func mpvRegister() *mpv.Client {
 	s := mpv.NewRPCServer(ll)
 	rpc.Register(s)
 	rpc.HandleHTTP()
-	l, err := net.Listen("tcp", ":9999")
+	l, err := net.Listen(tcp, tcpPort)
 	if err != nil {
 		log.Fatal("Listen error: ", err)
 	}
 	go http.Serve(l, nil)
 
 	// Client
-	client, err := rpc.DialHTTP("tcp", "127.0.0.1:9999")
+	client, err := rpc.DialHTTP(tcp, tcpAddress+tcpPort)
 	if err != nil {
 		log.Fatal("Listen error: ", err)
 	}
@@ -113,11 +112,9 @@ func mpvRegister() *mpv.Client {
 }
 
 func buildMovieArgs(filename string) []string {
-	return []string{"-start_number",
-		"10", "-r", "1", "-i",
-		"images/clock%04d.png",
-		"-c:v", "libx264", "-vf", "fps=1", "-pix_fmt",
-		"yuv420p", "-y", filename}
+	return []string{"-start_number", "10", "-r", "1", "-i",
+		"images/clock%04d.png", "-c:v", "libx264", "-vf",
+		"fps=1", "-pix_fmt", "yuv420p", "-y", filename}
 }
 
 func buildMovie(filename string) {
