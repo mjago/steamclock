@@ -1,6 +1,8 @@
 # Steam Clock
 
-![Screenshot](https://github.com/mjago/steamclock/blob/7945258f849016c47383e687ba857ad179f8ba1e/clock/clock.png)
+<p align="center">
+  <img src="https://github.com/mjago/steamclock/blob/7945258f849016c47383e687ba857ad179f8ba1e/clock/clock.png?raw=true" alt="Steamclock Image"/>
+</p>
 
 Steam Punk Clock written in Go.
 
