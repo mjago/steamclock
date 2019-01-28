@@ -33,7 +33,7 @@ const (
 	clockY          = 455
 )
 
-type Clock struct {
+type clock struct {
 	hourhand, minutehand, secondhand, steampunkleft, steampunkright image.Image
 }
 
@@ -66,13 +66,17 @@ func printError(err error) {
 	}
 }
 
+func exit(code int) {
+	os.Exit(code)
+}
+
 func printOutput(outs []byte) {
 	if len(outs) > 0 {
 		fmt.Printf("==> Output: %s\n", string(outs))
 	}
 }
 
-func drawClock(then time.Time, outfile string, clk Clock) {
+func drawClock(then time.Time, outfile string, clk clock) {
 	var dc *gg.Context
 	second, minute, hour := then.Second(), then.Minute(), then.Hour()
 	ahour, aminute, asecond := adjHour(hour, minute), adjMinute(minute, second), adjSecond(second)
@@ -126,12 +130,13 @@ func buildMovie(filename string) {
 			waitStatus = exitError.Sys().(syscall.WaitStatus)
 			printOutput([]byte(fmt.Sprintf("%d", waitStatus.ExitStatus())))
 		}
+		exit(1)
 	} else {
 		waitStatus = cmd.ProcessState.Sys().(syscall.WaitStatus)
 	}
 }
 
-func buildClock(then time.Time, filename string, clk Clock) {
+func buildClock(then time.Time, filename string, clk clock) {
 	for count := 10; count < 10+10; count++ {
 		outfile := clockfilePrefix + strconv.Itoa(count) + ".png"
 		drawClock(then.Add(time.Second*time.Duration(count-10)), outfile, clk)
@@ -143,6 +148,7 @@ func displayClock(client *mpv.Client, filename string) {
 	absPath, err := filepath.Abs(filename)
 	if err != nil {
 		printError(err)
+		exit(1)
 	}
 	client.Loadfile(absPath, mpv.LoadFileModeAppendPlay)
 	client.SetPause(false)
@@ -160,7 +166,8 @@ func loadImage(filename string) image.Image {
 		err error
 	)
 	if b, err = os.Open(filename); err != nil {
-		panic("(loadImage()) failed to open " + filename)
+		printError(err)
+		exit(1)
 	}
 	defer b.Close()
 	switch ext := filename[len(filename)-4 : len(filename)]; ext {
@@ -169,16 +176,18 @@ func loadImage(filename string) image.Image {
 	case ".jpg":
 		img, err = jpeg.Decode(b)
 	default:
-		panic("(loadImage()) Image loading requires png or jpg format!")
+		printError(err)
+		exit(1)
 	}
 	if err != nil {
-		panic("(loadImage()) failed to decode " + filename)
+		printError(err)
+		exit(1)
 	}
 	return img
 }
 
-func loadClock() Clock {
-	var clk Clock
+func loadClock() clock {
+	var clk clock
 	clk.hourhand = loadImage("clock/hour.png")
 	clk.minutehand = loadImage("clock/min.png")
 	clk.secondhand = loadImage("clock/sec.png")
