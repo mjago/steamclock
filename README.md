@@ -1,15 +1,19 @@
 # Steam Clock
 
-<p align="center">
-  <img src="https://github.com/mjago/steamclock/blob/7945258f849016c47383e687ba857ad179f8ba1e/clock/clock.png?raw=true" alt="Steamclock Image"/>
-</p>
-
 Steam Punk Clock written in Go.
 
 This clock was one of several sections of a visual display
 created for the **Lincoln West-End Lights Festival**.
 
+## Screenshot
+
+<p align="center">
+  <img src="https://github.com/mjago/steamclock/blob/7945258f849016c47383e687ba857ad179f8ba1e/clock/clock.png?raw=true" alt="Steamclock Image"/>
+</p>
+
 ## Installation
+
+*go get github.com/mjago/steamclock*
 
 Requires MPV and FFMPEG to operate.
 
